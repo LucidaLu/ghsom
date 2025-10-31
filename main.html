@@ -90,7 +90,9 @@
       document.getElementById('case-enum').innerHTML = `<table id="case-table"><tbody>${bs}</tbody></table>`;
     }
 
-    $.post("http://8.134.173.177:9200/query", {
+    // var hostIP = "http://8.134.173.177:9200";
+    var hostIP = 'https://ghsom-serverless.vercel.app';
+    $.post(`${hostIP}/query`, {
       id: localStorage.getItem("id"),
       name: localStorage.getItem("name"),
     }, function (data, status) {
@@ -125,7 +127,7 @@
       delta = delta || 0;
       score += delta;
 
-      $.post("http://8.134.173.177:9200/report", {
+      $.post(`${hostIP}/report`, {
         id: localStorage.getItem("id"),
         name: localStorage.getItem("name"),
         case: cur_case.split('<br>')[0],
