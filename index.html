@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>光华口腔医学院牙体牙髓科实习生临床思维培训站点</title>
+  <link href="./bootstrap.min.css" rel="stylesheet">
+  <link href="./style.css" rel="stylesheet">
+  <style>
+    body {
+      height: 95vh;
+    }
+
+    #wrapper {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #login-box-wrap {
+      /* background-color: grey; */
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      background-image: url('assets/lxd-select.jpg');
+      background-size: contain;
+    }
+
+    #login-box {
+      background-color: white;
+      border-radius: 5px;
+      border: 1.5px solid;
+      border-color: #9F333C;
+      width: 80%;
+      padding: 0 10px 0 10px;
+    }
+
+    #login-text {
+      text-align: center;
+      color: #9F333C;
+      font-weight: bold;
+      margin: 20px 0 20px 0;
+    }
+
+
+    #login-button-wrap {
+      margin: 50px 0 20px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="./bootstrap.bundle.min.js"></script>
+  <div id="wrapper" class="container">
+    <div class="row">
+      <img alt="logo" id="logo" src="assets/logo-title.png" />
+    </div>
+    <div class="row block" id="login-box-wrap">
+      <div class="row" id="login-box">
+        <span id="login-text">学生登录</span>
+        <div id="login-form">
+          <div class="row g-2">
+            <div class="col-12">
+              <div class="form-floating">
+                <input class="form-control" id="name-input">
+                <label for="name-input">姓名</label>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-floating">
+                <input class="form-control" id="id-input">
+                <label for="id-input">学号</label>
+              </div>
+            </div>
+          </div>
+          <div class="row" id="login-button-wrap">
+            <button class="btn btn-dark red-button" id="login-button" onclick="login()">登录</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script>
+    function login() {
+      let name = document.getElementById('name-input').value,
+        id = document.getElementById('id-input').value;
+      if (name == '' || id == '') {
+        alert('请输入姓名和学号');
+        return;
+      }
+
+      localStorage.setItem('name', name);
+      localStorage.setItem('id', id);
+
+      window.location.href = '/welcome.html';
+    }
+  </script>
+</body>
+
+</html>

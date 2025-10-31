@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>光华口腔医学院牙体牙髓科实习生临床思维培训站点</title>
+  <link href="./bootstrap.min.css" rel="stylesheet">
+  <link href="./style.css" rel="stylesheet">
+  <style>
+    body {
+      height: 80vh;
+    }
+
+    #wrapper {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #welcome-text-wrap {
+      /* background-color: grey; */
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="./bootstrap.bundle.min.js"></script>
+  <div id="wrapper" class="container">
+    <div class="row">
+      <img alt="logo" id="logo" src="assets/logo-title.png" />
+    </div>
+    <div class="row block" id="welcome-text-wrap">
+      <div>
+        欢迎你，<span id="name-display"></span>同学！<br>
+
+        &nbsp; &nbsp; &nbsp; &nbsp;牙痛是牙体牙髓病科医生接诊最常接触的症状，引起牙痛的疾病类型复杂多样，对于刚接触临床的实习生，进行顺利且规范的诊断常存在困难。<br>
+        <!-- 
+在口腔疾病的诊断过程中，应按照疼痛症状可能涉及疾病的<strong>发病率</strong>进行一一排除，从<strong>最常见的疾病</strong>和可疑患牙局部入手，若一一排除<strong>再逐渐扩大范围</strong>，直至罕见的、远隔器官的疾病。<br> -->
+
+        &nbsp; &nbsp; &nbsp;
+        &nbsp;因此，为帮助实习生培养临床诊断思维，本网站将临床医生对<strong>常见口腔疾病</strong>进行<strong>诊断的思维模式</strong>具体地呈现出来，希望同学们能在网页互动的过程中，大致了解牙体牙髓病科<strong>常见疾病的诊断流程</strong>，初步构建牙体牙髓病病科常见疾病的<strong>诊断思维模式</strong>，为临床实习助力。
+      </div>
+    </div>
+    <button class="btn btn-dark red-button" data-bs-toggle="modal" data-bs-target="#start-learning">开始学习</button>
+  </div>
+  </div>
+
+  <div class="modal fade" id="start-learning" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">温馨提示</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          &nbsp; &nbsp; &nbsp;
+          &nbsp;口腔疾病的外在表现与许多因素息息相关，有时理论知识与临床问题并不能完全相通，在口腔疾病的诊断过程中，应按照疼痛症状可能涉及疾病的<strong>发病率</strong>一一排除，从<strong>最常见的疾病</strong>和可疑患牙局部入手，若一一排除<strong>再逐渐扩大范围</strong>，直至罕见的、远隔器官的疾病。<br>
+          &nbsp; &nbsp; &nbsp;
+          &nbsp;希望同学们在实习前可以通过本网站的学习初步掌握牙体牙髓病科常见病<strong>最常见的表现及诊断</strong>，并在临床实践中不断丰富诊断经验、提高诊断能力，从个性提取<strong>共性</strong>，从表象窥见<strong>本质</strong>。<br>
+          &nbsp; &nbsp; &nbsp; &nbsp;<strong>祝同学们实习顺利！</strong>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark red-button" onclick="start()">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+  <script>
+    document.getElementById("name-display").innerHTML = localStorage.getItem("name");
+    function start() {
+      window.location.href = "/main.html";
+    }
+  </script>
+</body>
+
+</html>

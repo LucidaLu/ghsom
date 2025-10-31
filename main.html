@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>光华口腔医学院牙体牙髓科实习生临床思维培训站点</title>
+  <link href="./bootstrap.min.css" rel="stylesheet">
+  <link href="./style.css" rel="stylesheet">
+  <style>
+    #next-problem-button-wrap {
+      padding-top: 40px;
+    }
+
+    #score-display {
+      margin: 0 auto;
+      text-align: center;
+      font-size: 8em;
+      font-weight: bold;
+      color: #9F333C;
+    }
+  </style>
+  <script src="./jquery.min.js"></script>
+
+</head>
+
+<body>
+  <script src="./bootstrap.bundle.min.js"></script>
+  <script src="./markdown-it.min.js"></script>
+
+  <div id="wrapper" class="container">
+    <div class="row">
+      <img alt="logo" id="logo" src="assets/logo-title.png" />
+    </div>
+    <div id="selection" class="row block">
+      选择一份病例开始学习
+      <div id="case-enum" style="padding-top:10px;">
+
+      </div>
+    </div>
+    <div id="prob-demo" style="display:none">
+      <div class="row block">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <button class="btn btn-outline-secondary" id="home" onclick=javascript:location.reload()>返回首页</button>
+
+                <span style="padding: 2px;"></span>
+
+                <button class="btn btn-outline-secondary" id="back" disabled onclick=go_back()>返回上页</button>
+              </td>
+              <td>
+                <span class="float-end" id="score-wrap">分数：<span id="score">100</span></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="content-wrap">
+        <div class="row block" id="question">
+        </div>
+        <div class="row block" id="content">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var md = window.markdownit(), cases;
+    function case_show() {
+      let bs = '', row = '', cnt = 0;
+      const line_length = 2;
+      for (let i in cases) {
+        row += `<td><span class="choice round-rad" onclick="start_case('${i}')"><span>${i}</span></span></td>`
+        cnt += 1;
+        if (cnt % line_length == 0) {
+          bs += `<tr>${row}</tr>`;
+          row = '';
+        }
+      }
+      if (cnt % line_length != 0) {
+        while (cnt % line_length != 0) {
+          row += '<td></td>';
+          cnt += 1;
+        }
+        bs += `<tr>${row}</tr>`;
+      }
+
+      document.getElementById('case-enum').innerHTML = `<table id="case-table"><tbody>${bs}</tbody></table>`;
+    }
+
+    $.post("http://8.134.173.177:9200/query", {
+      id: localStorage.getItem("id"),
+      name: localStorage.getItem("name"),
+    }, function (data, status) {
+      cases = JSON.parse(data);
+      case_show();
+    });
+
+    let pages, cur_case;
+
+    function start_case(id) {
+      cur_case = id;
+      pages = cases[id];
+      document.getElementById('selection').style.display = 'none';
+      document.getElementById('prob-demo').style.display = 'block';
+
+      goto('p1', 0, "");
+    }
+
+    let history = [], ans = {};
+
+    function go_back() {
+      history.pop();
+      if (history.length == 1) {
+        document.getElementById('back').disabled = true;
+      }
+      console.log(history);
+      load_problem(history.at(-1));
+    }
+
+    let score = 100;
+    function goto(id, delta, additional) {
+      delta = delta || 0;
+      score += delta;
+
+      $.post("http://8.134.173.177:9200/report", {
+        id: localStorage.getItem("id"),
+        name: localStorage.getItem("name"),
+        case: cur_case.split('<br>')[0],
+        from: history.at(-1),
+        to: id,
+        score: score,
+        add: additional
+      }, function (data, status) {
+        console.log(data)
+        document.getElementById('score').innerHTML = score;
+        history.push(id);
+        document.getElementById('back').disabled = false;
+        load_problem(id);
+      });
+    }
+
+    function toggle_active(id) {
+      document.getElementById(id).classList.toggle('choice-active');
+    }
+
+    let calc_score, correct_chs, explanation, choice_made, chs_cnt, choices;
+
+    function make_choice(chs) {
+      if (!choice_made) {
+        if (chs == correct_chs) {
+          document.getElementById(`choice${chs}`).classList.toggle('choice-active');
+          for (let i = 0; i < chs_cnt; ++i)
+            if (i != chs)
+              document.getElementById(`choice${i}`).classList.toggle('choice-dead');
+          document.getElementById('content').innerHTML = md.render('回答正确。' + explanation);
+        } else {
+          document.getElementById(`choice${correct_chs}`).classList.toggle('choice-active');
+          document.getElementById(`choice${chs}`).classList.toggle('choice-wrong');
+          for (let i = 0; i < chs_cnt; ++i)
+            if (i != chs)
+              document.getElementById(`choice${i}`).classList.toggle('choice-dead');
+          document.getElementById('content').innerHTML = md.render('回答错误。' + explanation);
+          score -= 10;
+          document.getElementById('score').innerHTML = score;
+        }
+        choice_made = true;
+
+        let nxt_id = `p${1 + parseInt(history.at(-1).substring(1))}`;
+        if (nxt_id in pages)
+          document.getElementById('content').innerHTML += `<div class="row" id="next-problem-button-wrap">
+            <button class="btn btn-dark red-button" id="next-problem-button" onclick="goto('${nxt_id}',0,'${choices[chs]}')"})">下一题</button>
+          </div>`;
+        else
+          document.getElementById('content').innerHTML += `<div class="row" id="next-problem-button-wrap">
+            <button class="btn btn-dark red-button" id="next-problem-button" onclick="goto('final',0, '${choices[chs]}')"})">查看成绩</button>
+          </div>`;
+      }
+    }
+
+    let diag_lis, diag_ord, diag_made = [];
+    function click_diag(dag) {
+      for (let i in diag_lis) {
+        document.getElementById(`diag${i}`).style.opacity = 0;
+      }
+      if (diag_made.indexOf(diag_lis[dag]) == -1) {
+        diag_made.push(diag_lis[dag]);
+      } else {
+        diag_made.splice(diag_made.indexOf(diag_lis[dag]), 1);
+      }
+      console.log(diag_made);
+
+      let diag_btn = document.getElementById(`diag${dag}`);
+      setTimeout(() => {
+        for (let i in diag_lis) {
+          document.getElementById(`diag${i}`).innerHTML =
+            (diag_made.indexOf(diag_lis[i]) == -1 ? '' : `${diag_made.indexOf(diag_lis[i]) + 1}. `) + diag_lis[i];
+          document.getElementById(`diag${i}`).style.opacity = 1;
+        }
+        diag_btn.classList.toggle('diag-active');
+        diag_btn.style.opacity = 1;
+      }, 100);
+    }
+
+    function check_diag_goto(correct_to, wrong_to, delta) {
+      console.log(correct_to, wrong_to, delta);
+      if (diag_made.length == diag_ord.length) {
+        for (let i in diag_ord) {
+          if (diag_ord[i] != diag_made[i]) {
+            goto(wrong_to, delta, diag_made.toString());
+            return;
+          }
+        }
+        goto(correct_to, 0, diag_made.toString());
+      } else
+        goto(wrong_to, delta, diag_made.toString());
+    }
+
+    function load_problem(id) {
+      function do_load() {
+        if (id == 'final') {
+          document.getElementById('question').innerHTML = localStorage.getItem('name') + '同学，你的分数是：' + `<div id="score-display">${score}</div>`;
+          document.getElementById('content').innerHTML = '';
+        } else {
+          let p = pages[id];
+
+          console.log(p.text.replace(/\n/g, "<br />"));
+          document.getElementById('question').innerHTML = (ans[id] ? (ans[id] == "right" ? '判断正确。' : '判断错误。') : '') + md.render(p.text).replaceAll('&lt;&lt;', '<span class="red-text">').replaceAll('&gt;&gt;', '</span>');
+
+          console.log(md.render(p.text));
+
+          if (p.diagnose) {
+            let diag_body = '';
+            diag_lis = [], diag_ord = [];
+            diag_made = [];
+            for (let i of p.diagnose) {
+              if (i[0] == '~') {
+                i = i.substring(1);
+                diag_ord.push(i);
+              }
+              diag_lis.push(i);
+            }
+            function random_shuffle(a) {
+              for (let i = 0; i < a.length; ++i) {
+                let j = Math.floor(Math.random() * a.length);
+                let t = a[i];
+                a[i] = a[j];
+                a[j] = t;
+              }
+            }
+            // random_shuffle(diag_lis);
+            for (let i in diag_lis) {
+              diag_body += `<span class="diag" id="diag${i}" onclick="click_diag(${i})">${diag_lis[i]}</span>`;
+            }
+            document.getElementById('question').innerHTML += diag_body;
+          }
+
+
+          if (p.next) {
+            let next_body = '';
+            if (p.diagnose) { // 做诊断
+              for (let i of p.next) {
+                next_body += `<span class="choice-wrapper"><span class="choice" onclick="check_diag_goto('${i.correct_to}', '${i.wrong_to}', ${i.delta})">确定</span></span>`
+              }
+            } else {
+              for (let i of p.next) {// 普通
+                next_body += `<span class="choice-wrapper"><span class="choice" onclick="goto('${i.to}', ${i.delta}, '${i.display}')">${i.display}</span></span>`
+              }
+            }
+            document.getElementById('content').innerHTML = next_body;
+          } else {
+            console.assert(p.choices);
+            let chs_str = '';
+            choice_made = false;
+            explanation = p.explanation;
+            chs_cnt = p.choices.length;
+            choices = p.choices;
+            for (let i in p.choices) {
+              let s = p.choices[i];
+              if (s[0] == '~') {
+                s = s.substring(1);
+                correct_chs = i;
+              }
+              chs_str += `<span class="choice-wrapper"><span class="choice" id="choice${i}" onclick="make_choice(${i})">${s}</span></span>`
+            }
+
+            document.getElementById('question').innerHTML += chs_str;
+            document.getElementById('content').innerHTML = '';
+          }
+        }
+      }
+
+      document.getElementById('content-wrap').style.opacity = 0;
+      setTimeout(() => {
+        do_load();
+        document.getElementById('content-wrap').style.opacity = 1;
+      }, 100);
+
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,193 @@
+.choice-wrapper {
+  padding: 5px;
+  width: 100%;
+}
+
+.choice {
+  width: 100%;
+  cursor: pointer;
+  display: block;
+  user-select: none;
+  border: 1px solid;
+  text-align: center;
+  padding: 5px;
+
+  background-color: white;
+  transition: background-color 0.1s ease-in-out,
+    color 0.1s ease-in-out
+}
+
+.red-text {
+  color: #9F333C;
+}
+
+.diag {
+  transition: background-color 0.1s ease-in-out,
+    color 0.1s ease-in-out,
+    opacity 0.1s ease-in-out;
+  width: 100%;
+  cursor: pointer;
+  display: block;
+  user-select: none;
+  text-align: center;
+  padding: 5px;
+  font-weight: bold;
+  color: #9F333C
+}
+
+.diag-active {
+  text-decoration: underline #9F333C;
+}
+
+.choice:active {
+  color: white;
+  background-color: #9F333C;
+}
+
+.choice-wrong {
+  color: white;
+  background-color: rgb(64, 64, 64);
+}
+
+.choice-wrong:active {
+  color: white;
+  background-color: rgb(64, 64, 64);
+}
+
+.choice-dead:active {
+  color: inherit;
+  background-color: inherit;
+}
+
+
+.choice-active {
+  /* font-weight: bold; */
+  color: white;
+  background-color: #9F333C;
+}
+
+.choice-active:active {
+  color: white;
+  background-color: #9F333C;
+}
+
+
+.block {
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+
+/* #wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vh; */
+/* height: 100vh; */
+/* } */
+
+#home,
+#back {
+  user-select: none;
+  font-size: 10px;
+}
+
+body {
+  margin: 20px;
+}
+
+#score-wrap {
+  user-select: none;
+  font-weight: bold;
+  color: #9F333C;
+}
+
+#logo {
+  width: 100%;
+}
+
+#content-wrap {
+  transition: opacity 0.1s ease-in-out;
+}
+
+#question {
+  min-height: 30vh;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1.5px solid;
+  border-color: #9F333C;
+  color: rgb(64, 64, 64);
+}
+
+#content {
+  /* background-color: antiquewhite; */
+  padding: 10px;
+}
+
+#case-table {
+  width: 100%;
+  font-size: 20px;
+  /* line-height: 100px; */
+  font-weight: 100;
+}
+
+#case-table>tbody>tr>td>span {
+  height: 200px;
+  display: flex;
+  align-items: center;
+}
+
+#case-table>tbody>tr>td>span>span {
+  width: 100%;
+  text-align: center;
+}
+
+
+
+#selection {
+  font-weight: bold;
+  /* color: #9F333C;
+  border-color: #9F333C; */
+}
+
+.round-rad {
+  border-radius: 5px;
+}
+
+p,
+h1,
+h2,
+h3,
+h4 {
+  padding: 0 !important;
+}
+
+ol,
+ul {
+  padding-left: 1.2rem !important;
+}
+
+
+
+.red-button {
+  background-color: #9F333C;
+  border-color: #9F333C;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.red-button:active {
+  background-color: #551c20;
+  border-color: #551c20;
+}
+
+
+img {
+  width: 100%;
+  padding: 20px;
+}
+
+#logo {
+  padding: 0;
+}
